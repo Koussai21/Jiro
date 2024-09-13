@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>JIRO</h1>
+    <div id="Ticket">
+        <form action="postit" style="display: flex; flex-direction: column;">
+            <label for="taskName">Nom de la tâche</label>
+            <input type="text" id="nom" placeholder="nom de la tâche">
+            <label for="start">à finir pour le:</label>
+            <input type="date" id="start">
+            <label for="taskAuthor">Créé par:</label>
+            <input type="text" id="author" placeholder="ex: Alain Dupont">
+            <label for="worker">Responsable de l'activité</label>
+            <input type="text" id="worker" placeholder="personne chargée de faire la tâche">
+            <label for="priority">priorité</label>
+            <select name="priority" id="priority">
+                <option value="faible">faible</option>
+                <option value="medium">medium</option>
+                <option value="haute">haute</option>
+                <option value="trèshaute">très haute</option>
+            </select>
+            <label for="description">description</label>
+            <textarea name="description" id="descr" placeholder="description de la tâche"></textarea>
+        </form>
+    </div>
+    <button id="taskButton">New Task</button>
+    <div id="taskList">
+        <div id="todoCategory" class="category">Todo</div>
+        <div id="inProgressCategory" class="category">In Progress</div>
+        <div id="doneCategory" class="category">Done</div>
+    </div>
+
+    <script>
+        var taskButton = document.getElementById("taskButton");
+        var taskList = document.getElementById("taskList");
+        class Task {
+            constructor(name, date, author, worker,priority, description, id) {
+                this.name = name;
+                this.date = date;
+                this.author = author;
+                this.worker = worker;
+                this.priority = priority;
+                this.description = description;
+                this.id = id;
+                this.category = null;
+            }
+        }
+
+        var tasks = [];
+        var taskIdCounter = 0;
+
+        taskButton.addEventListener("click", function() {
+    var name = document.getElementById("nom").value;
+    var date = document.getElementById("start").value;
+    let currentDate = new Date();
+    var author = document.getElementById("author").value;
+    var worker = document.getElementById("worker").value;
+    var priority = document.getElementById("priority").value;
+    var description = document.getElementById("descr").value;
+
+    if (name && date && author && description) {
+        var taskId = `task-${taskIdCounter++}`;
+        var task = new Task(name, date, author, worker,priority, description, taskId);
+        tasks.push(task);
+
+        let formattedDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
+        var taskElement = document.createElement('div');
+        taskElement.classList.add('task');
+        taskElement.id = taskId;
+        taskElement.draggable = true;
+        taskElement.innerHTML = `
+            <h2>${task.name}</h2>
+            <p>à finir le: ${task.date}</p>
+            <p>Créé le: ${formattedDate}</p>
+            <p>Créé par: ${task.author}</p>
+            <p>Pris en charge par: ${task.worker}</p>
+            <p>Niveau de priorité: ${task.priority}</p>
+            <p>Description: ${task.description}</p>
+        `;
+
+
+        document.getElementById("todoCategory").appendChild(taskElement);
+
+
+        taskElement.addEventListener("dragstart", function(event) {
+            event.dataTransfer.setData("text/plain", event.target.id);
+        });
+    } else {
+        alert("Veuillez remplir tous les champs.");
+    }
+});
+
+
+        var categories = document.querySelectorAll(".category");
+
+        categories.forEach(function(category) {
+            category.addEventListener("dragover", function(event) {
+                event.preventDefault();  
+            });
+
+            category.addEventListener("drop", function(event) {
+console.log(event.target.getAttribute("id"));
+                event.preventDefault();
+                var taskId = event.dataTransfer.getData("text/plain");
+
+                var taskElement = document.getElementById(taskId);
+                if (taskElement) {
+                    category.appendChild(taskElement);
+                    taskElement.style.border = "1px solid #ccc";
+                    taskElement.style.padding = "10px";
+                    taskElement.style.margin = "10px";
+                    taskElement.style.background = "#f0f0f0";
+                    taskElement.style.borderRadius = "10px";
+                    var task = tasks.find(t => t.id === taskId);
+                    if (task) {
+                        task.category = category.id;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

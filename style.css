@@ -1,0 +1,45 @@
+
+body{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-family: 'Courier New', Courier, monospace;
+}
+#taskList {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-top: 20px;
+    margin-top: 1%;
+}
+.task {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+.category {
+    background-color: #ddd;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    min-height: 200px;
+    border: 1px solid #ccc;
+}
+#taskButton{
+    font-size: 24px;
+    background-color:rgb(14, 68, 150);
+    border-radius: 5%;
+    color: rgb(225, 237, 233);
+    margin-top: 1%;
+}
+
+#todoCategory{
+    width: 30%;
+}
+#inProgressCategory{
+    width: 30%;
+}
+#doneCategory{
+    width: 30%;
+}
